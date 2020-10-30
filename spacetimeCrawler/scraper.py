@@ -1,0 +1,53 @@
+import re
+from urllib.parse import urlparse
+from database import Database
+from ExecuteTokenizer import Tokenizer
+from bs4 import BeautifulSoup
+
+database = Database()
+tokenizer = Tokenizer()
+
+def scraper(url, resp):
+    url = url.split('#')[0]
+    if resp.raw_response == None:
+        return list()
+    if resp.status == 200:
+        if tokenizer.executeTokenize(database,url,resp):
+            links = extract_next_links(url, resp)
+            return [link for link in links if is_valid(link)]
+        return list()
+    if resp.status>= 600:
+        database.addInvalidUrl(url)
+        return list()
+    elif resp.status >= 400 and resp.status <=599:
+        database.addInvalidUrl(url)
+        return list()
+
+def extract_next_links(url, resp):
+    output = []
+    soup = BeautifulSoup(resp.raw_response.content, features = "lxml")
+    for link in soup.find_all("a"):
+        if link.get("href") != None:
+            if "/pdf/" and ".zip" and ".odc" not in link.get("href"):
+                output.append(link.get("href").split("#")[0])
+    return output
+
+# TODO: implement the is_valid function 
+def is_valid(url):
+    try:
+        parsed = urlparse(url)
+        if parsed.scheme not in set(["http", "https"]):
+            return False
+        return not re.match(
+            r".*\.(css|js|bmp|gif|jpe?g|ico"
+            + r"|png|tiff?|mid|mp2|mp3|mp4"
+            + r"|wav|avi|mov|mpeg|ram|m4v|mkv|ogg|ogv|pdf"
+            + r"|ps|eps|tex|ppt|pptx|doc|docx|xls|xlsx|names"
+            + r"|data|dat|exe|bz2|tar|msi|bin|7z|psd|dmg|iso"
+            + r"|epub|dll|cnf|tgz|sha1"
+            + r"|thmx|mso|arff|rtf|jar|csv"
+            + r"|rm|smil|wmv|swf|wma|zip|rar|gz)$", parsed.path.lower())
+
+    except TypeError:
+        print ("TypeError for ", parsed)
+        raise
