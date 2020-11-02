@@ -49,7 +49,7 @@ class Database():
         #write out the 50 common word 
         infile.write("50 common word are:")
         commonword = sorted(self.commonWord.items(),key=lambda x: x[1],reverse=True)
-        for key,value in commonword:
+        for key,value in commonword[:51]:
             infile.write(f"{key} --> {value}\n")
 
         #write out the domain in ics.uci.edu

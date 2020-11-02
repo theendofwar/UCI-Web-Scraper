@@ -19,6 +19,7 @@ def scraper(url, resp):
     elif resp.status >= 400 and resp.status <=599:
         database.addInvalidUrl(url)
         return list()
+    return list()
 
 def extract_next_links(url, resp):
     output = []
