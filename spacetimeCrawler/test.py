@@ -8,5 +8,7 @@ str2 = "a dog aren't watching stupid kids. life is tuff. $$$ quotes from my moth
 words = nltk.word_tokenize(str1)
 new_words= [word for word in words if word.isalnum()]
 #print(words)
-print(Simhash(str1).value)
-print(Simhash(str2).value)
+#print(Simhash(str1).value)
+#print(Simhash(str2).value)
+
+print("hhh\n")

@@ -36,4 +36,24 @@ class Database():
         self.invalidUrl.add(url)
     #automaticly write the report after the crawler finish all the work
     def writeReport(self):
-        pass
+        infile = open("report.txt","w")
+
+        #write the unqiue page
+        infile.write("The unique link crawl by crawler")
+        for link in self.uniqueUrl:
+            infile.write(f"{link}\n")
+
+        #write out the longest page
+        infile.write(f"The longest page find in{self.longestPage['url']} and the number of words is {self.longestPage['num']}\n")
+
+        #write out the 50 common word 
+        infile.write("50 common word are:")
+        commonword = sorted(self.commonWord.items(),key=lambda x: x[1],reverse=True)
+        for key,value in commonword:
+            infile.write(f"{key} --> {value}\n")
+
+        #write out the domain in ics.uci.edu
+        infile.write("list of subdomain in ics.uci.edu are:")
+        subdomain = sorted(self.commonWord.items(),key=lambda x: x[0][7:],reverse=True)
+        for key,value in subdomain:
+            infile.write(f"{key} --> {value}\n")
