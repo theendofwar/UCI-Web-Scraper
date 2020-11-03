@@ -4,6 +4,8 @@ from database import Database
 from ExecuteTokenizer import Tokenizer
 from bs4 import BeautifulSoup
 
+
+
 database = Database()
 tokenizer = Tokenizer()
 
@@ -17,6 +19,9 @@ def scraper(url, resp):
             return [link for link in links if is_valid(link)]
         return list()
     elif resp.status >= 400 and resp.status <=599:
+        database.addInvalidUrl(url)
+        return list()
+    elif resp.status >= 600:
         database.addInvalidUrl(url)
         return list()
     return list()

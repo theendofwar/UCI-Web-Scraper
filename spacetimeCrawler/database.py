@@ -1,5 +1,6 @@
 from collections import defaultdict
 import nltk
+import re
 
 class Database():
     def __init__(self):
@@ -20,7 +21,7 @@ class Database():
 
     #update longest page in the database
     def updateLongestpage(self,url:str, wordnum:int):
-        if wordnum>self.longestPage[1]:
+        if wordnum>self.longestPage["num"]:
             self.longestPage["url"] = url
             self.longestPage["num"] = wordnum
 
@@ -34,26 +35,32 @@ class Database():
     #update invalidUrl to the database
     def addInvalidUrl(self,url:str):
         self.invalidUrl.add(url)
+
+    @staticmethod
+    def sortfunction(url:str):
+        match = re.search(r"http[s]?:\/\/(www.)?(\w+)",url[0])
+        return match.group(2).lower()
+    
     #automaticly write the report after the crawler finish all the work
     def writeReport(self):
         infile = open("report.txt","w")
 
         #write the unqiue page
-        infile.write("The unique link crawl by crawler")
+        infile.write("The unique link crawl by crawler\n")
         for link in self.uniqueUrl:
             infile.write(f"{link}\n")
 
         #write out the longest page
-        infile.write(f"The longest page find in{self.longestPage['url']} and the number of words is {self.longestPage['num']}\n")
+        infile.write(f"The longest page find in {self.longestPage['url']} and the number of words is {self.longestPage['num']}\n")
 
         #write out the 50 common word 
-        infile.write("50 common word are:")
+        infile.write("50 common word are:\n")
         commonword = sorted(self.commonWord.items(),key=lambda x: x[1],reverse=True)
         for key,value in commonword[:51]:
             infile.write(f"{key} --> {value}\n")
 
         #write out the domain in ics.uci.edu
-        infile.write("list of subdomain in ics.uci.edu are:")
-        subdomain = sorted(self.commonWord.items(),key=lambda x: x[0][7:],reverse=True)
+        infile.write("list of subdomain in ics.uci.edu are:\n")
+        subdomain = sorted(self.subDomain.items(),key=Database.sortfunction,reverse=True)
         for key,value in subdomain:
             infile.write(f"{key} --> {value}\n")
