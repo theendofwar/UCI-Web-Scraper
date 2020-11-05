@@ -1,5 +1,10 @@
-from urllib.parse import urlparse
+import re
 
-parsed = urlparse("https://mswe.ics.uci.edu/admissions/cost-and-financial-aid")
+def sortfunction(url:str):
+        match = re.search(r"http[s]?:\/\/(www.)?(.+)",url[0])
+        return match.group(2).lower()
 
-print(parsed[0]+" "+parsed[1])
+subDomain = {"http://xtune.ics.uci":2,"http://psearch.ics.uci.edu":3,"https://emj.ics.uci.edu":6,"https://aiclub.ics.uci.edu":7}
+
+subdomain = sorted(subDomain.items(),key=sortfunction)
+print(subdomain)

@@ -15,6 +15,8 @@ class Database():
         # subDomain store all the number of subdomain ics.uci.edu has
         self.subDomain = defaultdict(int)
 
+        self.robotTXT = 0
+
     # add the uniqueUrl to the database
     def addUniqueUrl(self,url:str)->None:
         self.uniqueUrl.add(url)
@@ -38,7 +40,7 @@ class Database():
 
     @staticmethod
     def sortfunction(url:str):
-        match = re.search(r"http[s]?:\/\/(www.)?(\w+)",url[0])
+        match = re.search(r"http[s]?:\/\/(www.)?(.+)",url[0])
         return match.group(2).lower()
     
     #automaticly write the report after the crawler finish all the work
@@ -49,18 +51,22 @@ class Database():
         infile.write("The unique link crawl by crawler\n")
         for link in self.uniqueUrl:
             infile.write(f"{link}\n")
-
+        infile.write("\n")
         #write out the longest page
         infile.write(f"The longest page find in {self.longestPage['url']} and the number of words is {self.longestPage['num']}\n")
-
+        infile.write("\n")
         #write out the 50 common word 
         infile.write("50 common word are:\n")
         commonword = sorted(self.commonWord.items(),key=lambda x: x[1],reverse=True)
         for key,value in commonword[:51]:
             infile.write(f"{key} --> {value}\n")
-
+        infile.write("\n")
         #write out the domain in ics.uci.edu
         infile.write("list of subdomain in ics.uci.edu are:\n")
-        subdomain = sorted(self.subDomain.items(),key=Database.sortfunction,reverse=True)
+        subdomain = sorted(self.subDomain.items(),key=Database.sortfunction)
         for key,value in subdomain:
             infile.write(f"{key} --> {value}\n")
+        infile.write("\n")
+        infile.write(f"robot.txt: {self.robotTXT}")
+
+        infile.close()

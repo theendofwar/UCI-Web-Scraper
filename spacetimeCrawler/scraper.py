@@ -3,11 +3,12 @@ from urllib.parse import urlparse
 from database import Database
 from ExecuteTokenizer import Tokenizer
 from bs4 import BeautifulSoup
-
+from utils.robotTXT import getRobot
 
 
 database = Database()
 tokenizer = Tokenizer()
+robotTXT = getRobot()
 
 def scraper(url, resp):
     url = url.split('#')[0]
@@ -40,12 +41,27 @@ def is_valid(url):
     try:
         parsed = urlparse(url)
         count = 0
+        specUrl = ""
         for i in ["ics.uci.edu","cs.uci.edu","informatics.uci.edu",
                                      "stat.uci.edu","today.uci.edu/department/information_computer_sciences"]:
             if i in parsed.netloc:
                 count += 1
+                specUrl = i
         if count != 0:
-
+            url = parsed.geturl()
+            calender = parsed.geturl().rfind("/calender/")
+            if calender != -1 and specUrl == "today.uci.edu/department/information_computer_sciences":
+                database.robotTXT+=1
+                return False
+            for disallow in robotTXT[specUrl]["Disallow"]:
+                if disallow in url:
+                    cont = 0
+                    for allow in robotTXT[specUrl]["Allow"]:
+                        if allow in url:
+                            cont+=1
+                    if cont == 0:
+                        database.robotTXT+=1
+                        return False
             if "reply" and "wics.ics.uci.edu" in parsed.geturl():
                 return False
             elif "pdf" in parsed.geturl():
@@ -75,7 +91,6 @@ def is_valid(url):
                         return False
         else:
             return False
-        
     except TypeError:
         print ("TypeError for ", parsed)
         raise
@@ -83,3 +98,5 @@ def is_valid(url):
     except TypeError:
         print ("TypeError for ", parsed)
         raise
+
+

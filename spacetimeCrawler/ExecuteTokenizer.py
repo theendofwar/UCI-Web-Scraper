@@ -95,7 +95,7 @@ class Tokenizer():
                     database.updateCommonword(word)
             database.updateLongestpage(url,wordcount)
             # update the number of subdomain in database
-            if "ics.uci.edu" in url:
+            if "ics.uci.edu" in url and urlparse(url)[1] != "ics.uci.edu":
                 database.updateSubDomain(urlparse(url)[0] + "://" + urlparse(url)[1])
         return True
     

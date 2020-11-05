@@ -14,7 +14,6 @@ class Worker(Thread):
         super().__init__(daemon=True)
         
     def run(self):
-        
         while True:
             tbd_url = self.frontier.get_tbd_url()
             if not tbd_url:
