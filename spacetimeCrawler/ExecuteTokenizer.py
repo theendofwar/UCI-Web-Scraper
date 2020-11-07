@@ -65,14 +65,18 @@ class Tokenizer():
                           'you', "you'd", "you'll", "you're", "you've", 'your', 'yours', 'yourself', 'yourselves', 'zero'}
 
     def __init__(self):
-        # TODO: find a better way to detact duplicate
+
         self.simHash = dict()
 
     #execute the process of tokenize, parsing through webpage and store data in database, assum the resp is not empty
     def executeTokenize(self,database:Database,url:str,resp)->bool:
         # check if the this url is in the database or not
-        if url in database.uniqueUrl or url in database.invalidUrl:
-            return False
+        for uri in database.uniqueUrl:
+            if(urlparse(uri)[1:]) == (urlparse(url)[1:]):
+                return False
+        for uri in database.invalidUrl:
+            if(urlparse(uri)[1:]) == (urlparse(url)[1:]):
+                return False
         return self.tokenize(database,url,resp)
 
     # a helper method to execute tokenize 
@@ -83,6 +87,7 @@ class Tokenizer():
         all_text = soup.get_text()
         if all_text != "":
             if Simhash(all_text).value in self.simHash.keys():
+                database.robotTXT+=1
                 return False
             self.simHash[Simhash(all_text).value] = 1
             database.addUniqueUrl(url)
@@ -90,8 +95,8 @@ class Tokenizer():
             # count the total word in this page
             wordcount = 0
             for word in words:
-                if word.isalnum() and word not in Tokenizer._StopWord:
-                    wordcount += 1
+                wordcount += 1
+                if word.isalnum() and word not in Tokenizer._StopWord and word.isdigit() != True:
                     database.updateCommonword(word)
             database.updateLongestpage(url,wordcount)
             # update the number of subdomain in database

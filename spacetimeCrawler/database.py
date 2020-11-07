@@ -1,7 +1,7 @@
 from collections import defaultdict
 import nltk
 import re
-
+from urllib.parse import urlparse
 class Database():
     def __init__(self):
         # uniqueUrl store all the uniqueUrl into a set
@@ -13,9 +13,7 @@ class Database():
         # commonWord store all the common word the crawler parse
         self.commonWord = defaultdict(int)
         # subDomain store all the number of subdomain ics.uci.edu has
-        self.subDomain = defaultdict(int)
-
-        self.robotTXT = 0
+        self.subDomain = defaultdict(int) 
 
     # add the uniqueUrl to the database
     def addUniqueUrl(self,url:str)->None:
@@ -48,10 +46,9 @@ class Database():
         infile = open("report.txt","w")
 
         #write the unqiue page
+        
         infile.write("The unique link crawl by crawler\n")
-        for link in self.uniqueUrl:
-            infile.write(f"{link}\n")
-        infile.write("\n")
+        infile.write(f"#{str(len(self.uniqueUrl))}")
         #write out the longest page
         infile.write(f"The longest page find in {self.longestPage['url']} and the number of words is {self.longestPage['num']}\n")
         infile.write("\n")
@@ -66,7 +63,4 @@ class Database():
         subdomain = sorted(self.subDomain.items(),key=Database.sortfunction)
         for key,value in subdomain:
             infile.write(f"{key} --> {value}\n")
-        infile.write("\n")
-        infile.write(f"robot.txt: {self.robotTXT}")
-
         infile.close()

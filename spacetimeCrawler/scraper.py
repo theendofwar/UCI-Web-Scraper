@@ -36,7 +36,7 @@ def extract_next_links(url, resp):
                 output.append(link.get("href").split("#")[0])
     return output
 
-# TODO: implement the is_valid function 
+
 def is_valid(url):
     try:
         parsed = urlparse(url)
@@ -51,7 +51,6 @@ def is_valid(url):
             url = parsed.geturl()
             calender = parsed.geturl().rfind("/calender/")
             if calender != -1 and specUrl == "today.uci.edu/department/information_computer_sciences":
-                database.robotTXT+=1
                 return False
             for disallow in robotTXT[specUrl]["Disallow"]:
                 if disallow in url:
@@ -60,7 +59,6 @@ def is_valid(url):
                         if allow in url:
                             cont+=1
                     if cont == 0:
-                        database.robotTXT+=1
                         return False
             if "reply" and "wics.ics.uci.edu" in parsed.geturl():
                 return False
@@ -94,9 +92,4 @@ def is_valid(url):
     except TypeError:
         print ("TypeError for ", parsed)
         raise
-
-    except TypeError:
-        print ("TypeError for ", parsed)
-        raise
-
 
