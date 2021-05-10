@@ -1,4 +1,4 @@
-# ICS-121-Assignment-2
+# UCI Web Scraper
 
 This is a workspace for all the team members
 
